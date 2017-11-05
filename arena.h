@@ -1,3 +1,5 @@
+#ifndef ARENA_H
+#define ARENA_H
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
@@ -17,3 +19,4 @@ void drawCircle (GLfloat x, GLfloat y, GLfloat rd, GLfloat r, GLfloat g, GLfloat
       glVertex3f( cos(i) * rd + x, sin(i) * rd + y, 0.0 );
   glEnd();
 }
+#endif

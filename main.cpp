@@ -1,6 +1,7 @@
 #include <GL/glut.h>
 #include <stdio.h>
 #include "player.h"
+#include "arena.h"
 #define ViewingWidth 500
 #define ViewingHeight 500
 
@@ -11,8 +12,8 @@ int previousTime;
 
 // Player
 bool isJumping = false;
-GLfloat maxRadius;
-GLfloat originalRadius;
+// GLfloat maxRadius;
+// GLfloat originalRadius;
 Player player;
 // Arena
 Circle track;
@@ -26,8 +27,8 @@ void display(void)
 {
 	/* Limpar todos os pixels */
 	glClear (GL_COLOR_BUFFER_BIT);
-	jump();
-	robo.Draw();
+	player.jump(previousTime, isJumping);
+	player.Draw();
 	/* Não esperar! */
 	glFlush ();
 }
@@ -63,22 +64,22 @@ void keyPress(unsigned char key, int x, int y)
 void idleFunc(void)
 {
 	if(keys[0])	{
-		robo.MovePlayerY(0.1);
-		// if (robo.gThetaPl > 0) robo.MovePlayerX(-0.05);
-		// else if(robo.gThetaPl < 0) robo.MovePlayerX(0.05);
+		player.MovePlayerY(0.1);
+		// if (player.gThetaPl > 0) player.MovePlayerX(-0.05);
+		// else if(player.gThetaPl < 0) player.MovePlayerX(0.05);
 	}
 	if(keys[1])	{
-		robo.MovePlayerY(-0.1);
-		// if (robo.gThetaPl > 0) robo.MovePlayerX(-0.05);
-		// else if(robo.gThetaPl < 0) robo.MovePlayerX(0.05);
+		player.MovePlayerY(-0.1);
+		// if (player.gThetaPl > 0) player.MovePlayerX(-0.05);
+		// else if(player.gThetaPl < 0) player.MovePlayerX(0.05);
 	}
 	if(keys[2]) {
-		robo.RotatePlayer(0.005);
-		if(keys[0] || keys[1]) robo.MovePlayerX(-0.05);
+		player.RotatePlayer(0.005);
+		if(keys[0] || keys[1]) player.MovePlayerX(-0.05);
 	}
 	if(keys[3]) {
-		robo.RotatePlayer(-0.005);
-		if(keys[0] || keys[1]) robo.MovePlayerX(0.05);
+		player.RotatePlayer(-0.005);
+		if(keys[0] || keys[1]) player.MovePlayerX(0.05);
 	}
 
 
@@ -114,8 +115,8 @@ void mouseClick(int button, int state, int x, int y)
 
 void mouseDrag (int x, int y) {
 	y = 250 - y; // verificar: tamanho da janela
-	if ( (x - mX > 0) && (robo.gThetaGun > -45) ) robo.rotateGun(-0.5);	// left
-	else if ( (x - mX < 0) && (robo.gThetaGun < 45) ) robo.rotateGun(0.5);	// right
+	if ( (x - mX > 0) && (player.gThetaGun > -45) ) player.rotateGun(-0.5);	// left
+	else if ( (x - mX < 0) && (player.gThetaGun < 45) ) player.rotateGun(0.5);	// right
 	mX = x;
 }
 
@@ -137,9 +138,6 @@ void init (void)
 
 int main(int argc, char** argv)
 {
-	maxRadius = robo.hRadius*1.5;
-	originalRadius = robo.hRadius;
-	printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_SINGLE |
 	GLUT_RGB);

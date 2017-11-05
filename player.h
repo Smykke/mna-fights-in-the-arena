@@ -19,10 +19,12 @@ class Player {
 	GLfloat legWidth;
 	GLint color[3];
 	GLint colorBorder[3];
+	GLfloat originalRadius;
+	GLfloat maxRadius;
 
 
 private:
-	void twoSeconds(int jumpTime);
+	float twoSeconds(int jumpTime);
 	void DesenhaRect(	GLint height, GLint width,
 				GLint forColor[], GLint borColor[]);
 	void DrawGun( GLfloat gX, GLfloat gY, GLfloat gTheta1);
@@ -56,7 +58,13 @@ public:
 		colorBorder[0] = 1;
 		colorBorder[1] = 1;
 		colorBorder[2] = 1;
+		maxRadius = this->hRadius*1.5;
+		originalRadius = this->hRadius;
+		// printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
+
 	};
+
+	void jump(int jumpTime, bool jumping);
 
 	void Draw() {
 			DrawPlayer(gX, gY, sWidth, sHeight, gThetaGun, gThetaPl, hRadius);
@@ -86,7 +94,6 @@ public:
 		this->legWidth = hRadius/2;
 	}
 
-	void jump(int jumpTime);
 
 	// void RodaBraco1(GLfloat gTheta1) {
 	// 	this->gTheta1 += gTheta1;

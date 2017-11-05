@@ -1,23 +1,24 @@
 #include "player.h"
+#include <GL/glut.h>
 
-float twoSeconds(int jumpTime) {
+float Player::twoSeconds(int jumpTime) {
   /* Delta time in seconds. */
   int t;
   float dt;
   t = glutGet(GLUT_ELAPSED_TIME);
-  dt = (t - previousTime) / 1000.0;
+  dt = (t - jumpTime) / 1000.0;
   return dt;
 }
 
-void jump (int jumpTime) {
-    if (isJumping) {
+void Player::jump (int jumpTime, bool jumping) {
+    if (jumping) {
       if (twoSeconds(jumpTime) >= 2) {
-        robo.ResizePlayer(originalRadius);
-        isJumping = false;
+        this->ResizePlayer(this->originalRadius);
+        jumping = false;
 			}
 			else {
-        if (twoSeconds(jumpTime) <= 1) robo.ResizePlayer(originalRadius*(1 + twoSeconds()*0.5));
-        else robo.ResizePlayer(maxRadius - (twoSeconds()-1)*0.5*originalRadius);
+        if (twoSeconds(jumpTime) <= 1) this->ResizePlayer(this->originalRadius*(1 + twoSeconds(jumpTime)*0.5));
+        else this->ResizePlayer(this->maxRadius - (twoSeconds(jumpTime)-1)*0.5*this->originalRadius);
     	}
 		}
 }
