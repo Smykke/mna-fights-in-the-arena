@@ -33,10 +33,10 @@ void Robo::DrawLegs( GLfloat gX, GLfloat gY) { // verificar: colocar a cor no ro
 	glPopMatrix();
 }
 
-void Robo::DrawGun( GLfloat gX, GLfloat gY, GLfloat gTheta1) {
+void Robo::DrawGun( GLfloat gX, GLfloat gY, GLfloat gTheta) {
 	glPushMatrix();
 	glTranslatef(gX, gY, 0);
-	glRotatef(gTheta1, 0, 0, 1);	// rotacionar o eixo z (mexer x, y)
+	glRotatef(gTheta, 0, 0, 1);	// rotacionar o eixo z (mexer x, y)
 	DesenhaRect(legWidth, legHeight, this->color, this->colorBorder);
 
 	// verificar: bala tem que partir daqui?
@@ -68,12 +68,13 @@ void Robo::DrawHeadShoulder(GLfloat radiusX, GLfloat radiusY) {
 }
 
 void Robo::DrawPlayer(GLfloat gX, GLfloat gY,	GLfloat shoulderWidth, GLfloat shoulderHeight,
-			GLfloat gTheta1, GLfloat gTheta2, GLfloat gTheta3, GLfloat headRadius)
+			GLfloat gThetaG, GLfloat gThetaP, GLfloat headRadius)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glTranslatef(gX,gY,0);
-	DrawGun(3*headRadius/2, 0, gTheta1);
+	glRotatef(gThetaP, 0, 0, 1);
+	DrawGun(3*headRadius/2, 0, gThetaG);
 	DrawLegs(-(headRadius/2.0), 0);
 	DrawHeadShoulder(shoulderWidth, shoulderHeight); // Ombro fica embaixo
 	DrawHeadShoulder(headRadius, headRadius);	// Desenha a cabeca em seguida

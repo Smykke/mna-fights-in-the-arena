@@ -8,12 +8,39 @@ float gx,gy;
 int keys[10];
 Robo robo;
 int mX = 0;
+bool isJumping = false;
+int previousTime;
+GLfloat maxRadius;
+GLfloat originalRadius;
+
+float twoSeconds() {
+  /* Delta time in seconds. */
+  int t;
+  float dt;
+  t = glutGet(GLUT_ELAPSED_TIME);
+  dt = (t - previousTime) / 1000.0;
+  return dt;
+}
+
+void jump () {
+    if (isJumping) {
+      if (twoSeconds() >= 2) {
+        robo.ResizePlayer(originalRadius);
+        isJumping = false;
+			}
+			else {
+        if (twoSeconds() <= 1) robo.ResizePlayer(originalRadius*(1 + twoSeconds()*0.5));
+        else robo.ResizePlayer(maxRadius - (twoSeconds()-1)*0.5*originalRadius);
+    	}
+		}
+}
+
 
 void display(void)
 {
 	/* Limpar todos os pixels */
 	glClear (GL_COLOR_BUFFER_BIT);
-	/* Desenhar um polígono branco (retângulo) */
+	jump();
 	robo.Draw();
 	/* Não esperar! */
 	glFlush ();
@@ -21,68 +48,72 @@ void display(void)
 void keyPress(unsigned char key, int x, int y)
 {
 	switch(key){
-		case 'w': 	keys[0] = 1; // foward
-		break;
-		case 's':	keys[1] = 1;	// back
-		break;
-	// case 'a':	keys[0] = 1;
-	// 		break;
-	// case 'd':	keys[1] = 1;
-	// 		break;
-	// case 'r': 	keys[4] = 1;
-	// 		break;
-	// case 'f': 	keys[5] = 1;
-	// 		break;
-	// case 't': 	keys[6] = 1;
-	// 		break;
-	// case 'g': 	keys[7] = 1;
-	// 		break;
-	// case 'y': 	keys[8] = 1;
-	// 		break;
-	// case 'h': 	keys[9] = 1;
-	// 		break;
+		case 'w':
+		case 'W': 	keys[0] = 1; // foward
+			break;
+		case 's':
+		case 'S':	keys[1] = 1;	// backward
+			break;
+		case 'a':
+		case 'A':	keys[2] = 1; // anti-clockwise
+				break;
+		case 'd':
+		case 'D':	keys[3] = 1;	// clockwise
+				break;
+		case 'p':
+ 		case 'P':
+			if (!isJumping) {
+				isJumping = true;
+				previousTime = glutGet(GLUT_ELAPSED_TIME);
+				printf("Pressionou p\n");
+			}
+			break;
+ 		case 27 :
+			exit(0);
 	default	: 	break;
 	}
 }
 
 void idleFunc(void)
 {
-	if(keys[0])	robo.MoveRoboY(0.1);
-	if(keys[1])	robo.MoveRoboY(-0.1);
-	// if(keys[0]) robo.MoveRoboX(-0.1);
-	// if(keys[1]) robo.MoveRoboX(0.1);
-	// if(keys[4])	robo.RodaBraco1(0.05);
-	// if(keys[5])	robo.RodaBraco1(-0.05);
-	// if(keys[6])	robo.RodaBraco2(0.05);
-	// if(keys[7])	robo.RodaBraco2(-0.05);
-	// if(keys[8])	robo.RodaBraco3(0.05);
-	// if(keys[9])	robo.RodaBraco3(-0.05);
+	if(keys[0])	{
+		robo.MovePlayerY(0.1);
+		// if (robo.gThetaPl > 0) robo.MovePlayerX(-0.05);
+		// else if(robo.gThetaPl < 0) robo.MovePlayerX(0.05);
+	}
+	if(keys[1])	{
+		robo.MovePlayerY(-0.1);
+		// if (robo.gThetaPl > 0) robo.MovePlayerX(-0.05);
+		// else if(robo.gThetaPl < 0) robo.MovePlayerX(0.05);
+	}
+	if(keys[2]) {
+		robo.RotatePlayer(0.005);
+		if(keys[0] || keys[1]) robo.MovePlayerX(-0.05);
+	}
+	if(keys[3]) {
+		robo.RotatePlayer(-0.005);
+		if(keys[0] || keys[1]) robo.MovePlayerX(0.05);
+	}
+
+
 	glutPostRedisplay();
 }
 
 void keyRelease(unsigned char key, int x, int y)
 {
 	switch(key){
-		case 'w': 	keys[0] = 0;	// foward
-		break;
-		case 's':	keys[1] = 0;	// back
-		break;
-	// case 'a':	keys[0] = 0;
-	// 		break;
-	// case 'd':	keys[1] = 0;
-	// 		break;
-	// case 'r': 	keys[4] = 0;
-	// 		break;
-	// case 'f': 	keys[5] = 0;
-	// 		break;
-	// case 't': 	keys[6] = 0;
-	// 		break;
-	// case 'g': 	keys[7] = 0;
-	// 		break;
-	// case 'y': 	keys[8] = 0;
-	// 		break;
-	// case 'h': 	keys[9] = 0;
-	// 		break;
+		case 'w':
+		case 'W': 	keys[0] = 0;	// foward
+			break;
+		case 's':
+		case 'S':	keys[1] = 0;	// back
+			break;
+		case 'a':
+		case 'A':	keys[2] = 0;	// anti-clockwise
+			break;
+		case 'd':
+		case 'D':	keys[3] = 0;	// clockwise
+			break;
 	default	: 	break;
 	}
 }
@@ -97,8 +128,8 @@ void mouseClick(int button, int state, int x, int y)
 
 void mouseDrag (int x, int y) {
 	y = 250 - y; // verificar: tamanho da janela
-	if ( (x - mX > 0) && (robo.gTheta1 > -45) ) robo.rotateGun(-0.5);
-	else if ( (x - mX < 0) && (robo.gTheta1 < 45) ) robo.rotateGun(0.5);
+	if ( (x - mX > 0) && (robo.gThetaGun > -45) ) robo.rotateGun(-0.5);	// left
+	else if ( (x - mX < 0) && (robo.gThetaGun < 45) ) robo.rotateGun(0.5);	// right
 	mX = x;
 }
 
@@ -120,6 +151,9 @@ void init (void)
 
 int main(int argc, char** argv)
 {
+	maxRadius = robo.hRadius*1.5;
+	originalRadius = robo.hRadius;
+	printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_SINGLE |
 	GLUT_RGB);

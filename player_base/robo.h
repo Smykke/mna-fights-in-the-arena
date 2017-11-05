@@ -10,12 +10,9 @@
 class Robo {
 	GLfloat gX;
 	GLfloat gY;
-	GLfloat gTheta2;
-	GLfloat gTheta3;
 	GLfloat gThetaWheel;
 	GLfloat direction;
 	bool switchLeg;
-	GLfloat hRadius;
 	GLfloat sWidth;
 	GLfloat sHeight;
 	GLfloat legHeight;
@@ -31,18 +28,19 @@ private:
 	void DrawLegs(GLfloat gX, GLfloat gY);
 	void DrawHeadShoulder(GLfloat radiusX, GLfloat radiusY);
 	void DrawPlayer(GLfloat gX, GLfloat gY,	GLfloat shoulderWidth, GLfloat shoulderHeight,
-		 		GLfloat gTheta1, GLfloat gTheta2, GLfloat gTheta3, GLfloat headRadius);
+		 		GLfloat gThetaG, GLfloat gThetaP, GLfloat headRadius);
 
 public:
 
-	GLfloat gTheta1;
+	GLfloat hRadius;
+	GLfloat gThetaGun;
+	GLfloat gThetaPl;
 
 	Robo() {
 		gX = 0;
 		gY = 0;
-		gTheta1 = 0;
-		gTheta2 = 0;
-		gTheta3 = 0;
+		gThetaGun = 0;
+		gThetaPl = 0;
 		gThetaWheel = 0;
 		direction = -1;
 		switchLeg = true;
@@ -60,21 +58,32 @@ public:
 	};
 
 	void Draw() {
-			DrawPlayer(gX, gY, sWidth, sHeight, gTheta1, gTheta2, gTheta3, hRadius);
+			DrawPlayer(gX, gY, sWidth, sHeight, gThetaGun, gThetaPl, hRadius);
 	};
 
 	void rotateGun(GLfloat dTheta) {
-		this->gTheta1 += dTheta;
+		this->gThetaGun += dTheta;
 	};
 
-	// void MoveRoboX(GLfloat gX) {
-	// 	this->gX += gX;
-	// 	gThetaWheel -= gX*360/(2*M_PI*radiusWheel);
-	// };
+	void RotatePlayer(GLfloat dTheta) {
+		this->gThetaPl += dTheta;
+	};
 
-	void MoveRoboY(GLfloat gY) {
+	void MovePlayerX(GLfloat gX) {
+		this->gX += gX;
+	};
+
+	void MovePlayerY(GLfloat gY) {
 		this->gY += gY;
 	};
+
+	void ResizePlayer(GLfloat newRadius) {
+		this->hRadius = newRadius;
+		this->sWidth = hRadius*2;
+		this->sHeight = hRadius/2;
+		this->legHeight = hRadius*2;
+		this->legWidth = hRadius/2;
+	}
 
 	// void RodaBraco1(GLfloat gTheta1) {
 	// 	this->gTheta1 += gTheta1;
