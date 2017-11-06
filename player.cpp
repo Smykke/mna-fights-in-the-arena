@@ -10,17 +10,26 @@ float Player::twoSeconds(int jumpTime) {
   return dt;
 }
 
-void Player::jump (int jumpTime, bool jumping) {
-    if (jumping) {
+bool Player::jump (int jumpTime, std::vector<Circle> obstacles) {
+    bool inside = false;
+    if (this->jumping) {
       if (twoSeconds(jumpTime) >= 2) {
         this->ResizePlayer(this->originalRadius);
-        jumping = false;
+        this->jumping = false;
+        for (int i = 0; i < obstacles.size(); i++) {
+          if (getPlayerDistance(this->gX, this->gY, obstacles[i]) < (obstacles[i].radius + this->hRadius)) {
+            this->inside = true;
+            break;
+          }
+          else this->inside = false;
+        }
 			}
 			else {
         if (twoSeconds(jumpTime) <= 1) this->ResizePlayer(this->originalRadius*(1 + twoSeconds(jumpTime)*0.5));
         else this->ResizePlayer(this->maxRadius - (twoSeconds(jumpTime)-1)*0.5*this->originalRadius);
     	}
 		}
+    return inside;
 }
 
 void Player::DesenhaRect(	GLint width, GLint height,
@@ -29,17 +38,17 @@ void Player::DesenhaRect(	GLint width, GLint height,
 	glColor3f(forColor[0], forColor[1], forColor[2]); // Interior
 	glBegin(GL_QUADS);
 		glVertex2f( -width/2.0,0.0);
-		glVertex2f( -width/2.0,height);
-		glVertex2f( width/2.0,height);
+		glVertex2f( -width/2.0,-height); //invertido
+		glVertex2f( width/2.0,-height); //invertido
 		glVertex2f( width/2.0,0.0);
 	glEnd();
 
 	glColor3f(borColor[0], borColor[1], borColor[2]); // Borda
-	glLineWidth(1.0);
+	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex2f( -width/2.0,0.0);
-		glVertex2f( -width/2.0,height);
-		glVertex2f( width/2.0,height);
+		glVertex2f( -width/2.0,-height); //invertido
+		glVertex2f( width/2.0,-height); //invertido
 		glVertex2f( width/2.0,0.0);
 	glEnd();
 }
@@ -48,10 +57,15 @@ void Player::DrawLegs( GLfloat gX, GLfloat gY) { // verificar: colocar a cor no 
 	glPushMatrix();
 	glTranslatef(gX, gY, 0);
 	// glRotatef(gTheta1, 0, 0, 1);	// rotacionar o eixo z (mexer x, y)
-	DesenhaRect(this->legWidth, this->legHeight, this->colorBorder, this->colorBorder);
-
-	glTranslatef(this->hRadius, gY, 0);
-	DesenhaRect(this->legWidth, -(this->legHeight), this->colorBorder, this->colorBorder);
+  if (switchLeg) {
+    DesenhaRect(this->legWidth, this->legHeight, this->colorBorder, this->colorBorder);
+    glTranslatef(this->hRadius, gY, 0);
+    DesenhaRect(this->legWidth, -(this->legHeight), this->colorBorder, this->colorBorder);
+  } else {
+    DesenhaRect(this->legWidth, -(this->legHeight), this->colorBorder, this->colorBorder);
+    glTranslatef(this->hRadius, gY, 0);
+    DesenhaRect(this->legWidth, this->legHeight, this->colorBorder, this->colorBorder);
+  }
 
 	glPopMatrix();
 }
@@ -95,6 +109,7 @@ void Player::DrawPlayer(GLfloat gX, GLfloat gY,	GLfloat shoulderWidth, GLfloat s
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+
 	glTranslatef(gX,gY,0);
 	glRotatef(gThetaP, 0, 0, 1);
 	DrawGun(3*headRadius/2, 0, gThetaG);
@@ -102,18 +117,5 @@ void Player::DrawPlayer(GLfloat gX, GLfloat gY,	GLfloat shoulderWidth, GLfloat s
 	DrawHeadShoulder(shoulderWidth, shoulderHeight); // Ombro fica embaixo
 	DrawHeadShoulder(headRadius, headRadius);	// Desenha a cabeca em seguida
 
-	// Roda direita
-	// glPushMatrix();
-	// glTranslatef(baseWidth/2, 0, 0);
-	// glRotatef(gThetaWheel, 0, 0, 1);
-	// glPopMatrix();
-
-	// //Roda esquerda
-	// glPushMatrix();
-	// glTranslatef(-(baseWidth/2), 0, 0);
-	// glRotatef(gThetaWheel, 0, 0, 1);
-	// DesenhaCirc(radiusWheel, 0, 1, 1);
-	// glPopMatrix();
-	//
 	glPopMatrix();
 }

@@ -4,15 +4,12 @@
 #include <GL/glu.h>
 #include <math.h>
 #include <stdlib.h>
-// Dimensions
-#define radiusWheel 30
+#include <vector>
+#include "circle.h"
+
 
 class Player {
-	GLfloat gX;
-	GLfloat gY;
-	GLfloat gThetaWheel;
 	GLfloat direction;
-	bool switchLeg;
 	GLfloat sWidth;
 	GLfloat sHeight;
 	GLfloat legHeight;
@@ -24,7 +21,6 @@ class Player {
 
 
 private:
-	float twoSeconds(int jumpTime);
 	void DesenhaRect(	GLint height, GLint width,
 				GLint forColor[], GLint borColor[]);
 	void DrawGun( GLfloat gX, GLfloat gY, GLfloat gTheta1);
@@ -34,37 +30,65 @@ private:
 		 		GLfloat gThetaG, GLfloat gThetaP, GLfloat headRadius);
 
 public:
-
+	GLfloat gX;
+	GLfloat gY;
 	GLfloat hRadius;
 	GLfloat gThetaGun;
 	GLfloat gThetaPl;
+	bool jumping;
+	bool inside;
+	bool switchLeg;
 
-	Player() {
+	Player() { // verificar: necessario?
 		gX = 0;
 		gY = 0;
 		gThetaGun = 0;
 		gThetaPl = 0;
-		gThetaWheel = 0;
+		// switchLeg = true;
+		// hRadius = 80;
+		// sWidth = hRadius*2;
+		// sHeight = hRadius/2;
+		// legHeight = hRadius*2;
+		// legWidth = hRadius/2;
+		// color[0] = 0;
+		// color[1] = 1;
+		// color[2] = 0;
+		// colorBorder[0] = 0;
+		// colorBorder[1] = 0;
+		// colorBorder[2] = 0;
+		// maxRadius = this->hRadius*1.5;
+		// originalRadius = this->hRadius;
+		// printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
+	};
+
+	Player(GLfloat centerX, GLfloat centerY, GLfloat radius) {
+		gX = centerX;
+		gY = centerY;
+		gThetaGun = 0;
+		gThetaPl = 0;
 		direction = -1;
 		switchLeg = true;
-		hRadius = 80;
+		jumping = false;
+		inside = false;
+		hRadius = radius;
 		sWidth = hRadius*2;
 		sHeight = hRadius/2;
-		legHeight = hRadius*2;
+		legHeight = hRadius*1.2;
 		legWidth = hRadius/2;
 		color[0] = 0;
 		color[1] = 1;
 		color[2] = 0;
-		colorBorder[0] = 1;
-		colorBorder[1] = 1;
-		colorBorder[2] = 1;
+		colorBorder[0] = 0;
+		colorBorder[1] = 0;
+		colorBorder[2] = 0;
 		maxRadius = this->hRadius*1.5;
 		originalRadius = this->hRadius;
 		// printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
-
 	};
 
-	void jump(int jumpTime, bool jumping);
+	float twoSeconds(int jumpTime);
+
+	bool jump(int jumpTime, std::vector<Circle> obstacles);
 
 	void Draw() {
 			DrawPlayer(gX, gY, sWidth, sHeight, gThetaGun, gThetaPl, hRadius);
