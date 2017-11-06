@@ -13,9 +13,11 @@ int ViewingHeight;
 
 float gx,gy;
 float playerSpeed;
+float shotSpeed;
 int keys[10];
 int mX = 0;
 int previousTime;
+int frameTime = 0;
 float switchTime;
 
 // Player
@@ -79,7 +81,6 @@ void keyPress(unsigned char key, int x, int y)
 			if (!player.jumping) {
 				player.jumping = true;
 				previousTime = glutGet(GLUT_ELAPSED_TIME);
-				printf("Pressionou p\n");
 			}
 			break;
  		case 27 :
@@ -90,21 +91,29 @@ void keyPress(unsigned char key, int x, int y)
 
 void idleFunc(void)
 {
-	if(keys[0])	{
-    move(0, -playerSpeed);
-	}
-	if(keys[1])	{
-    move(0, playerSpeed);
-	}
-	if(keys[2]) {
-		player.RotatePlayer(-playerSpeed/10);
-		if(keys[0] || keys[1]) move(-playerSpeed/2, 0);
-	}
-	if(keys[3]) {
-		player.RotatePlayer(playerSpeed/10);
-		if(keys[0] || keys[1]) move(playerSpeed/2, 0);
-	}
-	glutPostRedisplay();
+  int now = glutGet(GLUT_ELAPSED_TIME);
+  if (now - frameTime >= 0.001) {
+  	if(keys[0])	{
+      move(0, -playerSpeed);
+  	}
+  	if(keys[1])	{
+      move(0, playerSpeed);
+  	}
+  	if(keys[2]) {
+  		if(keys[0] || keys[1]) {
+        player.RotatePlayer(-playerSpeed/10);
+        move(-playerSpeed/2, 0);
+      } else player.RotatePlayer(-playerSpeed/2);
+  	}
+  	if(keys[3]) {
+  		if(keys[0] || keys[1]) {
+        player.RotatePlayer(playerSpeed/10);
+        move(playerSpeed/2, 0);
+      } else player.RotatePlayer(playerSpeed/2);
+  	}
+  	glutPostRedisplay();
+    frameTime = now;
+  }
 }
 
 void keyRelease(unsigned char key, int x, int y)
@@ -268,6 +277,7 @@ int readConfig (char* input) {
   arena = arena->NextSiblingElement("jogador");
   arena->QueryFloatAttribute( "vel", &playerSpeed );
   // printf("Velocidade do jogador: %f\n", playerSpeed);
+  arena->QueryFloatAttribute( "velTiro", &shotSpeed );
 
   doc.LoadFile(filePath);
   if (doc.ErrorID() == 0) printf("Arquivo de arena carregado!\n");

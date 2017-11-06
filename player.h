@@ -44,21 +44,6 @@ public:
 		gY = 0;
 		gThetaGun = 0;
 		gThetaPl = 0;
-		// switchLeg = true;
-		// hRadius = 80;
-		// sWidth = hRadius*2;
-		// sHeight = hRadius/2;
-		// legHeight = hRadius*2;
-		// legWidth = hRadius/2;
-		// color[0] = 0;
-		// color[1] = 1;
-		// color[2] = 0;
-		// colorBorder[0] = 0;
-		// colorBorder[1] = 0;
-		// colorBorder[2] = 0;
-		// maxRadius = this->hRadius*1.5;
-		// originalRadius = this->hRadius;
-		// printf("maxR: %.2f, oriR: %.2f\n", maxRadius, originalRadius);
 	};
 
 	Player(GLfloat centerX, GLfloat centerY, GLfloat radius) {
@@ -73,7 +58,7 @@ public:
 		hRadius = radius;
 		sWidth = hRadius*2;
 		sHeight = hRadius/2;
-		legHeight = hRadius*1.2;
+		legHeight = hRadius*1.4;
 		legWidth = hRadius/2;
 		color[0] = 0;
 		color[1] = 1;
@@ -117,17 +102,6 @@ public:
 		this->legHeight = hRadius*2;
 		this->legWidth = hRadius/2;
 	}
-
-
-	// void RodaBraco1(GLfloat gTheta1) {
-	// 	this->gTheta1 += gTheta1;
-	// };
-	// void RodaBraco2(GLfloat gTheta2) {
-	// 	this->gTheta2 += gTheta2;
-	// };
-	// void RodaBraco3(GLfloat gTheta3) {
-	// 	this->gTheta3 += gTheta3;
-	// };
 };
 
 #endif

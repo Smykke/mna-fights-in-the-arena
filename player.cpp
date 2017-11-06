@@ -56,7 +56,6 @@ void Player::DesenhaRect(	GLint width, GLint height,
 void Player::DrawLegs( GLfloat gX, GLfloat gY) { // verificar: colocar a cor no robo?
 	glPushMatrix();
 	glTranslatef(gX, gY, 0);
-	// glRotatef(gTheta1, 0, 0, 1);	// rotacionar o eixo z (mexer x, y)
   if (switchLeg) {
     DesenhaRect(this->legWidth, this->legHeight, this->colorBorder, this->colorBorder);
     glTranslatef(this->hRadius, gY, 0);
